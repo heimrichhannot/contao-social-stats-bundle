@@ -8,46 +8,47 @@
 
 namespace HeimrichHannot\SocialStatsBundle\StatSource\Concrete;
 
-use Contao\NewsModel;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use HeimrichHannot\SocialStatsBundle\StatSource\StatSourceInterface;
+use HeimrichHannot\SocialStatsBundle\StatSource\StatSourceItem;
 use HeimrichHannot\SocialStatsBundle\StatSource\StatSourceResult;
 
 class FacebookStatSource implements StatSourceInterface
 {
+    const GRAPH_URL = 'https://graph.facebook.com/v11.0/?id=%url%&fields=engagement&access_token=345243152579662%7CDMavAfdcWsa5scrgdMEWltbGUkE';
+
     public static function getName(): string
     {
         return 'Facebook';
     }
 
-    public function updateItem(NewsModel $newsModel): StatSourceResult
+    public function updateItem(StatSourceItem $item, array &$data): StatSourceResult
     {
-        return new StatSourceResult(0, static::getName());
+        $client = new Client([]);
+        $result = new StatSourceResult(static::getName());
+        $count = 0;
 
-//        $this->count = 0;
-//        $count = 0;
-//        foreach ($this->getUrls() as $url)
-//        {
-//            try {
-//                $response = $this->client->request('GET', 'https://graph.facebook.com/?id=' . $url);
-//            } catch (ClientException $e)
-//            {
-//                $this->setErrorCode(static::ERROR_BREAKING);
-//                $error = json_decode($e->getResponse()->getBody()->getContents());
-//                $this->setErrorMessage($error->error->message);
-//                return $this->error;
-//            }
-//
-//            if ($response && $response->getStatusCode() == 200)
-//            {
-//                $data = json_decode($response->getBody()->getContents(), true);
-//                $count += intval($data['share']['share_count']);
-//            }
-//        }
-//        $this->count = $count;
-//        return $count;
+        foreach ($item->getUrls() as $url) {
+            try {
+                $fbUrl = str_replace('%url%', urlencode($item->getBaseUrl().'/'.$url), static::GRAPH_URL);
+                $response = $client->request('GET', $fbUrl);
+            } catch (ClientException $e) {
+                $error = json_decode($e->getResponse()->getBody()->getContents());
+                $result->addError($error->error->message);
 
-//        $this->item->facebook_counter = $this->count;
-//        $this->item->facebook_updated_at = time();
-//        $this->item->save();
+                continue;
+            }
+
+            if ($response && 200 == $response->getStatusCode()) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                $count += (int) ($data['engagement']['share_count']);
+            }
+        }
+
+        $data['facebook'] = $count;
+        $result->setCount($count);
+
+        return $result;
     }
 }

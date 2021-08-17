@@ -10,20 +10,44 @@ namespace HeimrichHannot\SocialStatsBundle\StatSource;
 
 class StatSourceResult
 {
+    const TYPE_SUCCESS = 'success';
+    const TYPE_ERROR = 'error';
+
     /** @var int */
-    private $count = 0;
+    private $count;
     /** @var string */
     private $network;
     /** @var string */
     private $message = 'Found %count% shares on %network%.';
+    /** @var array */
+    private $errors = [];
 
     /**
      * @param string $message
      */
-    public function __construct(int $count, string $network)
+    public function __construct(string $network)
+    {
+        $this->network = $network;
+    }
+
+    public function getCount(): int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): void
     {
         $this->count = $count;
-        $this->network = $network;
+    }
+
+    public function addError(string $message): void
+    {
+        $this->errors[] = $message;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     public function getMessage(): string

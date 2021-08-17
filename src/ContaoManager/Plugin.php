@@ -23,6 +23,7 @@ class Plugin implements BundlePluginInterface
             BundleConfig::create(HeimrichHannotSocialStatsBundle::class)->setLoadAfter([
                 ContaoCoreBundle::class,
                 ContaoNewsBundle::class,
+                'HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle',
             ]),
         ];
     }

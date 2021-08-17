@@ -8,11 +8,9 @@
 
 namespace HeimrichHannot\SocialStatsBundle\StatSource;
 
-use Contao\NewsModel;
-
 interface StatSourceInterface
 {
     public static function getName(): string;
 
-    public function updateItem(NewsModel $newsModel): StatSourceResult;
+    public function updateItem(StatSourceItem $item, array &$data): StatSourceResult;
 }
