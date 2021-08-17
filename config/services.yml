@@ -1,0 +1,7 @@
+services:
+  _default:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  HeimrichHannot\SocialStatsBundle\Command\SocialStatsCommand: ~

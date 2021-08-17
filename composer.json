@@ -1,0 +1,24 @@
+{
+  "name": "heimrichhannot/contao-social-stats-bundle",
+  "type": "contao-bundle",
+  "description": "This bundle collects data about news entries.",
+  "license": "LGPL-3.0-or-later",
+  "require": {
+    "php": "^7.2",
+    "contao/core-bundle": "^4.4",
+    "contao/news-bundle": "^4.4",
+    "doctrine/dbal": "^2.13.1|^3.0",
+    "symfony/console": "^3.4|^4.4",
+    "symfony/config": "^3.4|^4.4",
+    "symfony/dependency-injection": "^3.4|^4.4",
+    "symfony/http-kernel": "^3.4|^4.4|^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "HeimrichHannot\\SocialStatsBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "HeimrichHannot\\SocialStatsBundle\\ContaoManager\\Plugin"
+  }
+}
