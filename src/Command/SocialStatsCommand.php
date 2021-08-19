@@ -47,6 +47,10 @@ class SocialStatsCommand extends Command
      * @var Router
      */
     protected $router;
+    /**
+     * @var bool
+     */
+    protected $dryRun = false;
 
     public function __construct(ContaoFramework $framework, EventDispatcher $eventDispatcher, array $bundleConfig, Router $router)
     {
@@ -65,6 +69,7 @@ class SocialStatsCommand extends Command
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the number of news article to update.', 20)
             ->addOption('age', 'a', InputOption::VALUE_REQUIRED, 'Limit the age of articles to be updated to a number of days. 0 means no limit.', 0)
             ->addOption('pid', null, InputOption::VALUE_REQUIRED, 'Limit the news articles to given archives. 0 means all archives.', 0)
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, "Don't write anything to the database. API-Calls are still executed.")
             ->setHelp(
                 "This command updates the social statistics of your news entries.\n\n".
                 "Following options are available for platforms option:\n".
@@ -82,6 +87,12 @@ class SocialStatsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $io->title('Updating Social Stats');
+
+        if ($input->hasOption('dry-run') && $input->getOption('dry-run')) {
+            $this->dryRun = true;
+            $io->note('Dry run enabled, no data will be written to the database. API-Calls will be made!');
+            $io->newLine();
+        }
 
         $baseUrl = $this->bundleConfig['base_url'] ?? null;
 
@@ -155,9 +166,17 @@ class SocialStatsCommand extends Command
                 }
             }
 
-            $news->huh_socialstats_values = serialize($data);
-            $news->huh_socialstats_last_updated = time();
-            $news->save();
+            if ($io->isVerbose()) {
+                $io->writeln('Data that will be stored:');
+                $io->writeln(print_r($data, true));
+                $io->newLine();
+            }
+
+            if (!$this->dryRun) {
+                $news->huh_socialstats_values = serialize($data);
+                $news->huh_socialstats_last_updated = time();
+                $news->save();
+            }
 
             $io->newLine(2);
         }

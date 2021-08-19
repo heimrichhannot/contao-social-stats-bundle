@@ -79,9 +79,9 @@ class FacebookStatSource implements StatSourceInterface
             }
 
             if ($response && 200 == $response->getStatusCode()) {
-                $data = json_decode($response->getBody()->getContents(), true);
-                $count += (int) $data['engagement']['share_count'];
-                $result->addVerboseMessage($url.': '.(int) $data['engagement']['share_count']);
+                $responseData = json_decode($response->getBody()->getContents(), true);
+                $count += (int) $responseData['engagement']['share_count'];
+                $result->addVerboseMessage($url.': '.(int) $responseData['engagement']['share_count']);
             }
         }
 

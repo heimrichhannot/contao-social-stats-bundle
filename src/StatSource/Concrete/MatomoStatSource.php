@@ -107,7 +107,7 @@ class MatomoStatSource implements StatSourceInterface
             $count += $urlCount;
         }
 
-        $data['matomo'] = $content;
+        $data['matomo'] = $count;
         $result->setCount($count);
 
         return $result;
