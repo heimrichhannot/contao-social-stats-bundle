@@ -48,6 +48,7 @@ Options:
   -l, --limit=LIMIT            Limit the number of news article to update. [default: 20]
   -a, --age=AGE                Limit the age of articles to be updated to a number of days. 0 means no limit. [default: 0]
       --pid=PID                Limit the news articles to given archives. 0 means all archives. [default: 0]
+      --dry-run                Don't write anything to the database. API-Calls are still executed.
   -h, --help                   Display this help message
   -q, --quiet                  Do not output any message
   -V, --version                Display this application version
