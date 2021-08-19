@@ -67,7 +67,7 @@ class GoogleAnalyticsStatSource implements StatSourceInterface
         foreach ($item->getUrls() as $url) {
             $urlCount = 0;
             $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
-            $body->setReportRequests([$this->prepareRequest($url)]);
+            $body->setReportRequests([$this->prepareRequest($url, $item)]);
 
             try {
                 $responce = $this->analytics->reports->batchGet($body);
@@ -96,10 +96,10 @@ class GoogleAnalyticsStatSource implements StatSourceInterface
         return $result;
     }
 
-    public function prepareRequest($url)
+    public function prepareRequest(string $url, StatSourceItem $item)
     {
         $dataRange = new \Google_Service_AnalyticsReporting_DateRange();
-        $dataRange->setStartDate('2005-01-01');
+        $dataRange->setStartDate(date('Y-m-d', $item->getStartDate()));
         $dataRange->setEndDate(date('Y-m-d'));
 
         $metric = new Google_Service_AnalyticsReporting_Metric();

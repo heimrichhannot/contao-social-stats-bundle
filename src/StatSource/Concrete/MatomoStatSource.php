@@ -17,7 +17,7 @@ use HeimrichHannot\SocialStatsBundle\StatSource\StatSourceResult;
 
 class MatomoStatSource implements StatSourceInterface
 {
-    const API = '%matomo%?module=API&method=Actions.getPageUrl&pageUrl=%url%/&idSite=1&period=range&date=2021-01-01,today&format=json&token_auth=%token%';
+    const API = '%matomo%?module=API&method=Actions.getPageUrl&pageUrl=%url%/&idSite=1&period=range&date=%start_date%,today&format=json&token_auth=%token%';
 
     /**
      * @var Client
@@ -60,12 +60,13 @@ class MatomoStatSource implements StatSourceInterface
 
     public function updateItem(StatSourceItem $item, array &$data): StatSourceResult
     {
-        $api = str_replace(['%matomo%', '%token%'], [$this->matomoUrl, $this->token], static::API);
+        $api = str_replace(['%matomo%', '%token%', '%start_date%'], [$this->matomoUrl, $this->token, date('Y-m-d', $item->getStartDate())], static::API);
 
         $result = new StatSourceResult($this::getName());
         $count = 0;
 
         foreach ($item->getUrls() as $url) {
+            $urlCount = 0;
             $path = trim(parse_url($url, PHP_URL_PATH), '/');
 
             if (false === $path) {
@@ -99,10 +100,11 @@ class MatomoStatSource implements StatSourceInterface
                     foreach ($content as $entry) {
                         $rowCount += $entry['nb_hits'] ?? $entry['nb_visits'] ?? 0;
                     }
-                    $result->addVerboseMessage($url.': '.$rowCount);
-                    $count += $rowCount;
+                    $urlCount += $rowCount;
                 }
             }
+            $result->addVerboseMessage($url.': '.$urlCount);
+            $count += $urlCount;
         }
 
         $data['matomo'] = $content;

@@ -25,6 +25,7 @@ class HeimrichHannotSocialStatsExtension extends Extension
         if (isset($processedConfig['google_analytics']['key_file'])) {
             $processedConfig['google_analytics']['key_file'] = $container->getParameter('kernel.project_dir').'/'.$processedConfig['google_analytics']['key_file'];
         }
+
         $container->setParameter(static::ALIAS, $processedConfig);
 
         $loader = new YamlFileLoader(

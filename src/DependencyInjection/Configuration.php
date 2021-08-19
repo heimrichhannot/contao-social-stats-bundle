@@ -27,6 +27,11 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('base_url')->defaultNull()->info('Override the auto-determined base url.')->end()
+                ->integerNode('start_date')
+                    ->defaultValue(1104534000)
+                    ->info('The start date from which data should be counted. Needed for analytics services like matomo or google analytics. '
+                        .'Default values is 2005-01-01 as timestamp.')
+                ->end()
                 ->arrayNode('matomo')
                     ->children()
                         ->scalarNode('url')->info('Set the matomo url')->end()

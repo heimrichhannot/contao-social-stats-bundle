@@ -18,12 +18,15 @@ class StatSourceItem
     private $model;
     /** @var array */
     private $urls;
+    /** @var int */
+    private $startDate;
 
-    public function __construct(NewsModel $model, array $urls, string $baseUrl)
+    public function __construct(NewsModel $model, array $urls, string $baseUrl, int $startDate)
     {
         $this->model = $model;
         $this->urls = $urls;
         $this->baseUrl = $baseUrl;
+        $this->startDate = $startDate;
     }
 
     public function getModel(): NewsModel
@@ -39,5 +42,10 @@ class StatSourceItem
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
+    }
+
+    public function getStartDate(): int
+    {
+        return $this->startDate;
     }
 }

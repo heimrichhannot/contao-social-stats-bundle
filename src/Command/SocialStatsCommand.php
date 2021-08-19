@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Router;
 
 class SocialStatsCommand extends Command
 {
-    protected static $defaultName = 'huh:socialstats';
+    protected static $defaultName = 'huh:socialstats:update';
     /**
      * @var ContaoFramework
      */
@@ -83,9 +83,17 @@ class SocialStatsCommand extends Command
 
         $io->title('Updating Social Stats');
 
-        if (null === ($this->bundleConfig['base_url'] ?? null)) {
+        $baseUrl = $this->bundleConfig['base_url'] ?? null;
+
+        if (null === $baseUrl) {
             $route = $this->router->getContext();
             $baseUrl = $route->getScheme().$route->getHost();
+        }
+
+        if ($io->isVerbose()) {
+            $io->writeln('Base url: '.$baseUrl);
+            $io->writeln('Start date: '.date('Y-m-d', $this->bundleConfig['start_date']));
+            $io->newLine();
         }
 
         $newsList = $this->findNews($input);
@@ -125,7 +133,7 @@ class SocialStatsCommand extends Command
                 $io->listing($urls);
             }
 
-            $item = new StatSourceItem($news, $urls, $baseUrl);
+            $item = new StatSourceItem($news, $urls, $baseUrl, $this->bundleConfig['start_date']);
 
             $data = StringUtil::deserialize($news->huh_socialstats_values, true);
 
@@ -149,7 +157,7 @@ class SocialStatsCommand extends Command
 
             $news->huh_socialstats_values = serialize($data);
             $news->huh_socialstats_last_updated = time();
-//            $news->save();
+            $news->save();
 
             $io->newLine(2);
         }
@@ -193,8 +201,6 @@ class SocialStatsCommand extends Command
      */
     private function findNews(InputInterface $input): ?Collection
     {
-        return NewsModel::findMultipleByIds([818, 569]);
-
         $limit = $input->getOption('limit');
         $age = $input->getOption('age');
         $pids = $input->getOption('pid');
@@ -208,6 +214,7 @@ class SocialStatsCommand extends Command
         $values = [];
         $options = [
             'limit' => (int) $limit,
+            'order' => 'huh_socialstats_last_updated ASC, tstamp DESC',
         ];
 
         if (is_numeric($pids) && 0 == (int) $pids) {
@@ -224,7 +231,5 @@ class SocialStatsCommand extends Command
         }
 
         return NewsModel::findBy($columns, $values, $options);
-
-//            'order'=>'huh_socialstats_last_updated ASC',
     }
 }
