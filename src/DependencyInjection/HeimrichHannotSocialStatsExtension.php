@@ -15,12 +15,27 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class HeimrichHannotSocialStatsExtension extends Extension
 {
+    const ALIAS = 'huh_social_stats';
+
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration(true);
+        $processedConfig = $this->processConfiguration($configuration, $configs);
+
+        if (isset($processedConfig['google_analytics']['key_file'])) {
+            $processedConfig['google_analytics']['key_file'] = $container->getParameter('kernel.project_dir').'/'.$processedConfig['google_analytics']['key_file'];
+        }
+        $container->setParameter(static::ALIAS, $processedConfig);
+
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__.'/../Resources/config')
         );
         $loader->load('services.yml');
+    }
+
+    public function getAlias()
+    {
+        return static::ALIAS;
     }
 }

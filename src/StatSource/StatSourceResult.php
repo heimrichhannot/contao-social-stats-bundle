@@ -10,24 +10,30 @@ namespace HeimrichHannot\SocialStatsBundle\StatSource;
 
 class StatSourceResult
 {
-    const TYPE_SUCCESS = 'success';
-    const TYPE_ERROR = 'error';
+    const COUNT_TYPE_SHARES = 'shares';
+    const COUNT_TYPE_VISITS = 'visits';
+    const COUNT_TYPE_COMMENTS = 'comments';
 
     /** @var int */
     private $count;
     /** @var string */
     private $network;
     /** @var string */
-    private $message = 'Found %count% shares on %network%.';
+    private $message = 'Found %count% shares on <fg=yellow>%network%</>.';
     /** @var array */
     private $errors = [];
+
+    private $countType;
+
+    private $verboseMessages = [];
 
     /**
      * @param string $message
      */
-    public function __construct(string $network)
+    public function __construct(string $network, string $countType = self::COUNT_TYPE_SHARES)
     {
         $this->network = $network;
+        $this->countType = $countType;
     }
 
     public function getCount(): int
@@ -66,5 +72,35 @@ class StatSourceResult
     public function setMessage(string $message): void
     {
         $this->message = $message;
+    }
+
+    public function getVerboseMessages(): array
+    {
+        return $this->verboseMessages;
+    }
+
+    public function addVerboseMessage(string $message): void
+    {
+        $this->verboseMessages[] = $message;
+    }
+
+    public function getCountType(): string
+    {
+        return $this->countType;
+    }
+
+    public function setCountType(string $countType): void
+    {
+        $this->countType = $countType;
+    }
+
+    public function getNetwork(): string
+    {
+        return $this->network;
+    }
+
+    public function setNetwork(string $network): void
+    {
+        $this->network = $network;
     }
 }

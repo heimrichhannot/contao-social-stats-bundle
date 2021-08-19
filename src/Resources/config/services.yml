@@ -3,5 +3,7 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $bundleConfig: '%huh_social_stats%'
 
   HeimrichHannot\SocialStatsBundle\Command\SocialStatsCommand: ~

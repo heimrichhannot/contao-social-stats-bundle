@@ -12,5 +12,7 @@ interface StatSourceInterface
 {
     public static function getName(): string;
 
+    public function prepare(): void;
+
     public function updateItem(StatSourceItem $item, array &$data): StatSourceResult;
 }
