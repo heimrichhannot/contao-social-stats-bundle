@@ -82,6 +82,30 @@ We use the [Google APIs Client Library for PHP
 
 Here you find all informations how to gain these components: https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/web-php 
 
+### Add custom news routes
+
+By default, the platforms are searched for the default news url (the page you set in the news archive plus an identifier, typical the news alias, see `\Contao\News::generateNewsUrl()`). If you output your news on multiple locations or have some custom routing, you can add or change the urls with `AddNewsArticleUrlsEvent`
+
+```php
+use HeimrichHannot\SocialStatsBundle\Event\AddNewsArticleUrlsEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class SocialStatsEventSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
+        return [
+            AddNewsArticleUrlsEvent::class => 'addNewsArticleUrls',
+        ];
+    }
+
+    public function addNewsArticleUrls(AddNewsArticleUrlsEvent $event)
+    {
+        $event->addUrl($event->getBaseUrl().'/my_custom_news_article_route/'.$event->getItem()->id);
+    }
+}
+```
+
 ## Configuration reference
 
 ```yaml
