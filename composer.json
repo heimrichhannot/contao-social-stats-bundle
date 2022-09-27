@@ -4,15 +4,15 @@
   "description": "This bundle collects data about news entries.",
   "license": "LGPL-3.0-or-later",
   "require": {
-    "php": "^7.2",
-    "contao/core-bundle": "^4.4",
+    "php": "^7.4 || ^8.0",
+    "contao/core-bundle": "^4.9",
     "contao/news-bundle": "^4.4",
-    "guzzlehttp/guzzle": "^6.0|^7.0",
-    "symfony/console": "^3.4|^4.4",
-    "symfony/config": "^3.4|^4.4|^5.0",
-    "symfony/dependency-injection": "^3.4|^4.4",
-    "symfony/event-dispatcher": "^3.4|^4.4",
-    "symfony/http-kernel": "^3.4|^4.4|^5.0"
+    "guzzlehttp/guzzle": "^6.0 || ^7.0",
+    "symfony/console": "^4.4 || ^5.4",
+    "symfony/config": "^4.4 || ^5.4",
+    "symfony/dependency-injection": "^4.4 || ^5.4",
+    "symfony/event-dispatcher": "^4.4 || ^5.4",
+    "symfony/http-kernel": "^4.4 || ^5.4"
   },
   "autoload": {
     "psr-4": {

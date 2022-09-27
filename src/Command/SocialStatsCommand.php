@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,34 +25,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class SocialStatsCommand extends Command
 {
     protected static $defaultName = 'huh:socialstats:update';
-    /**
-     * @var ContaoFramework
-     */
-    protected $framework;
-    /**
-     * @var EventDispatcher
-     */
-    protected $eventDispatcher;
-    /**
-     * @var array
-     */
-    protected $bundleConfig;
-    /**
-     * @var Router
-     */
-    protected $router;
-    /**
-     * @var bool
-     */
-    protected $dryRun = false;
 
-    public function __construct(ContaoFramework $framework, EventDispatcher $eventDispatcher, array $bundleConfig, Router $router)
+    protected ContaoFramework          $framework;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected array                    $bundleConfig;
+    protected RouterInterface $router;
+    protected bool $dryRun = false;
+
+    public function __construct(ContaoFramework $framework, EventDispatcherInterface $eventDispatcher, array $bundleConfig, RouterInterface $router)
     {
         parent::__construct();
         $this->framework = $framework;
@@ -135,7 +121,10 @@ class SocialStatsCommand extends Command
                 $urls[] = News::generateNewsUrl($news);
             }
 
-            $event = $this->eventDispatcher->dispatch(AddNewsArticleUrlsEvent::class, new AddNewsArticleUrlsEvent($news, $urls, $baseUrl));
+            $event = $this->eventDispatcher->dispatch(
+                new AddNewsArticleUrlsEvent($news, $urls, $baseUrl),
+                AddNewsArticleUrlsEvent::class
+            );
 
             $urls = $event->getUrls();
 
