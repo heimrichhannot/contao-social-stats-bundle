@@ -55,7 +55,9 @@ class MatomoStatSource implements StatSourceInterface
         if (!$this->token) {
             throw new InvalidSetupException('Missing matomo access token.');
         }
-        $this->client = new Client([]);
+        $this->client = new Client([
+            'headers' => ['User-Agent' => 'HeimrichHannot/SocialStats'],
+        ]);
     }
 
     public function updateItem(StatSourceItem $item, array &$data): StatSourceResult
@@ -85,10 +87,14 @@ class MatomoStatSource implements StatSourceInterface
             try {
                 $response = $this->client->request('GET', $query);
             } catch (ClientException $e) {
+                $error = $e->getMessage();
+
                 if (!empty($e->getResponse()->getBody()->getContents())) {
-                    $error = json_decode($e->getResponse()->getBody()->getContents())->error->message;
-                } else {
-                    $error = $e->getMessage();
+                    $responseContent = json_decode($e->getResponse()->getBody()->getContents());
+
+                    if ($responseContent && isset($responseContent->error->message)) {
+                        $error = (string) $responseContent->error->message;
+                    }
                 }
                 $result->addError($error);
 
