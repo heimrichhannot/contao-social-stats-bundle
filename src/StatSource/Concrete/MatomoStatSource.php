@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -67,7 +67,7 @@ class MatomoStatSource implements StatSourceInterface
 
         foreach ($item->getUrls() as $url) {
             $urlCount = 0;
-            $path = trim(parse_url($url, PHP_URL_PATH), '/');
+            $path = trim(parse_url($url, \PHP_URL_PATH), '/');
 
             if (false === $path) {
                 $result->addError("URL $url is malformed");
@@ -85,8 +85,12 @@ class MatomoStatSource implements StatSourceInterface
             try {
                 $response = $this->client->request('GET', $query);
             } catch (ClientException $e) {
-                $error = json_decode($e->getResponse()->getBody()->getContents());
-                $result->addError($error->error->message);
+                if (!empty($e->getResponse()->getBody()->getContents())) {
+                    $error = json_decode($e->getResponse()->getBody()->getContents())->error->message;
+                } else {
+                    $error = $e->getMessage();
+                }
+                $result->addError($error);
 
                 continue;
             }

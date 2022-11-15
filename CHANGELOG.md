@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2022-11-15
+- Fixed: error if matomo request returns 403
+
 ## [0.1.1] - 2022-09-27
 - Changed: allow php 8
 - Changed: allow symfony 5
