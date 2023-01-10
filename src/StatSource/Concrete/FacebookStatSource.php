@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -75,6 +75,10 @@ class FacebookStatSource implements StatSourceInterface
                 $error = json_decode($e->getResponse()->getBody()->getContents());
                 $result->addError($error->error->message);
 
+                if (4 === $error->error->code) {
+                    break;
+                }
+
                 continue;
             }
 
@@ -85,7 +89,10 @@ class FacebookStatSource implements StatSourceInterface
             }
         }
 
-        $data['facebook'] = $count;
+        if ($count >= ($data['facebook'] ?? 0)) {
+            $data['facebook'] = $count;
+        }
+
         $result->setCount($count);
 
         return $result;

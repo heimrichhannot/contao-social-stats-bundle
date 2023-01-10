@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -72,7 +72,13 @@ class GoogleAnalyticsStatSource implements StatSourceInterface
             try {
                 $responce = $this->analytics->reports->batchGet($body);
             } catch (Google_Service_Exception $e) {
-                $result->addError($e->getMessage());
+                foreach ($e->getErrors() as $error) {
+                    $result->addError($error['message']);
+                }
+
+                if (429 === $e->getCode()) {
+                    break;
+                }
 
                 continue;
             }
@@ -90,8 +96,11 @@ class GoogleAnalyticsStatSource implements StatSourceInterface
             $result->addVerboseMessage($url.': '.$urlCount);
         }
 
+        if ($count >= ($data['google_analytics'] ?? 0)) {
+            $data['google_analytics'] = $count;
+        }
+
         $result->setCount($count);
-        $data['google_analytics'] = $count;
 
         return $result;
     }

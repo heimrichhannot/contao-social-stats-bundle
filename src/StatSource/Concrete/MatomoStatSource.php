@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -117,7 +117,10 @@ class MatomoStatSource implements StatSourceInterface
             $count += $urlCount;
         }
 
-        $data['matomo'] = $count;
+        if ($count >= ($data['matomo'] ?? 0)) {
+            $data['matomo'] = $count;
+        }
+
         $result->setCount($count);
 
         return $result;
